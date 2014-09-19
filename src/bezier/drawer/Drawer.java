@@ -2,8 +2,12 @@ package bezier.drawer;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.util.List;
 
+import bezier.BezierGenerator;
 import bezier.data.WindowConstants;
+import bezier.model.Curve;
+import bezier.model.basics.Point;
 
 public class Drawer {
 
@@ -98,5 +102,15 @@ public class Drawer {
 		putPixel(g, -y + centerX, -x + centerY);
 		putPixel(g, -y + centerX, x + centerY);
 		putPixel(g, -x + centerX, y + centerY);
+	}
+	
+	public static void drawBezierCurve(Graphics g, Curve curve) {
+		BezierGenerator generator = new BezierGenerator(curve);
+		List<Point> points = generator.generateBezierPoints();
+		for (int i = 1; i < points.size(); i++) {
+			Point p0 = points.get(i - 1);
+			Point p1 = points.get(i);
+			drawLine(g, (int)p0.getX(), (int)p0.getY(), (int)p1.getX(), (int)p1.getY(), curve.getColor());
+		}
 	}
 }

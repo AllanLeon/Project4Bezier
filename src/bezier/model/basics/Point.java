@@ -25,4 +25,10 @@ public class Point {
 	public void setY(double y) {
 		this.y = y;
 	}
+	
+	public static Point addition2Points(Point a, Point b) {
+		double x = a.getX() + b.getX();
+		double y = a.getY() + b.getY();
+		return new Point(x, y);
+	}
 }

@@ -1,5 +1,6 @@
 package bezier;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import bezier.model.Curve;
@@ -7,25 +8,25 @@ import bezier.model.basics.Point;
 
 public class BezierGenerator {
 	
-	private Curve curve;
 	private Point d1, d2, d3;
 	private Point a, b, c, d;
+	private Point actualPoint;
 	private int n;
 	
 	public BezierGenerator(Curve curve) {
-		this.curve = curve;
 		n = 50;
 		this.a = curve.calculateA();
 		this.b = curve.calculateB();
 		this.c = curve.calculateC();
 		this.d = curve.calculateD();
-		initializeDStart();
+		initializeStart();
 	}
 
-	private void initializeDStart() {
+	private void initializeStart() {
 		d3 = calculateD3();
 		d2 = calculateD2();
 		d1 = calculateD1();
+		actualPoint = d;
 	}
 	
 	private Point calculateD3() {
@@ -50,5 +51,24 @@ public class BezierGenerator {
 		double x = ka * a.getX() + kb * b.getX() + kc * c.getX();
 		double y = ka * a.getY() + kb * b.getY() + kc * c.getY();
 		return new Point(x, y);
+	}
+	
+	private Point generateNextPoint() {
+		Point nextD2 = Point.addition2Points(d2, d3);
+		Point nextD1 = Point.addition2Points(d1, d2);
+		Point nextPoint = Point.addition2Points(actualPoint, d1);
+		d2 = nextD2;
+		d1 = nextD1;
+		return nextPoint;
+	}
+	
+	public List<Point> generateBezierPoints() {
+		List<Point> points = new ArrayList<Point>();
+		points.add(actualPoint);
+		for (int i = 0; i < n; i++) {
+			actualPoint = generateNextPoint();
+			points.add(actualPoint);
+		}
+		return points;
 	}
 }
