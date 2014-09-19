@@ -32,8 +32,9 @@ public class MouseHandler implements MouseListener {
 	public void mouseClicked(MouseEvent e) {
 		double x = e.getX();
 		double y = Constants.PANEL_HEIGHT - e.getY();
+		Point clickedPoint = new Point(x, y);
 		if (Main.modState == ModState.Creating) {
-			creatorPoints.add(new Point(x, y));
+			creatorPoints.add(clickedPoint);
 			if (creatorPoints.size() >= 4) {
 				Main.getCurveManager().addCurve(
 						new Curve(creatorPoints.get(0), creatorPoints.get(1), creatorPoints.get(2), creatorPoints.get(3),

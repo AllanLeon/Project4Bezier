@@ -31,4 +31,10 @@ public class Point {
 		double y = a.getY() + b.getY();
 		return new Point(x, y);
 	}
+	
+	public double getDistanceTo(Point p) {
+		double dx = x - p.getX();
+		double dy = y - p.getY();
+		return Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
+	}
 }
