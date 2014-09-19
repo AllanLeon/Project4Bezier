@@ -66,6 +66,70 @@ public class Drawer {
 		}
 	}
 	
+	public static void drawDashedLine(Graphics g, int x0, int y0, int x1, int y1, Color color) {
+		g.setColor(color);
+		
+		int dx, dy, d, x, y, deltaE, deltaNE, stepx = 0, stepy = 0;
+		dx = x1-x0;
+		dy = y1-y0;
+		if (dx<0) {
+			dx = -dx;
+			stepx = -1;
+		} else if (dx>0) { 
+			stepx = 1;
+		} if (dy<0) {
+			dy = -dy;
+			stepy = -1;
+		} else if (dy>0) {
+			stepy = 1;
+		}
+		x = x0;
+		y = y0;
+		int n = 1;
+		putPixel(g, x, y);
+		if (dx > dy) {
+			d = 2*dy - dx;
+			deltaE = 2 * dy;
+			deltaNE = 2 * (dy-dx);
+			while (x != x1) {
+				x += stepx;
+				if (d<0) {
+					d += deltaE;
+				} else {
+					y += stepy;
+					d += deltaNE;
+				}
+				if (n != 4 && n != 5) {
+					putPixel(g, x, y);
+				} else {
+					if (n > 5) {
+						n = 0;					}
+				}
+			}
+			n++;
+		} else {
+			d = -2*dx + dy;
+			deltaE = -2 * dx;
+			deltaNE = 2 * (dy-dx);
+			while (y != y1) {
+				y += stepy;
+				if (d>0) {
+					d += deltaE;
+				} else {
+					x += stepx;
+					d += deltaNE;
+				}
+				if (n != 4 && n != 5) {
+					putPixel(g, x, y);
+				} else {
+					if (n > 5) {
+						n = 0;					}
+				}
+			}
+			n++;
+		}
+	}
+	
 	public static void drawCircle(Graphics g, int centerX, int centerY, int radius, Color color) {
 		g.setColor(color);
 		
@@ -110,7 +174,16 @@ public class Drawer {
 		for (int i = 1; i < points.size(); i++) {
 			Point p0 = points.get(i - 1);
 			Point p1 = points.get(i);
+			System.out.println(p0.getX() + " " + p0.getY() + ";" + p1.getX() + " " + p1.getY());
 			drawLine(g, (int)p0.getX(), (int)p0.getY(), (int)p1.getX(), (int)p1.getY(), curve.getColor());
 		}
+		Point p0 = curve.getPoint0();
+		Point p1 = curve.getPoint1();
+		Point p2 = curve.getPoint2();
+		Point p3 = curve.getPoint3();
+		drawDashedLine(g, (int)p0.getX(), (int)p0.getY(), (int)p1.getX(), (int)p1.getY(), Color.WHITE);
+		drawDashedLine(g, (int)p1.getX(), (int)p1.getY(), (int)p2.getX(), (int)p2.getY(), Color.WHITE);
+		drawDashedLine(g, (int)p2.getX(), (int)p2.getY(), (int)p3.getX(), (int)p3.getY(), Color.WHITE);
+		drawDashedLine(g, (int)p3.getX(), (int)p3.getY(), (int)p0.getX(), (int)p0.getY(), Color.WHITE);
 	}
 }
