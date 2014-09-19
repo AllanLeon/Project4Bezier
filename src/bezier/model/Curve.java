@@ -5,42 +5,41 @@ import java.util.ArrayList;
 import java.util.List;
 
 import bezier.controller.BezierGenerator;
+import bezier.data.Constants;
 import bezier.model.basics.Point;
 
 public class Curve {
 
-	private Point point0;
-	private Point point1;
-	private Point point2;
-	private Point point3;
 	private Color color;
 	private List<Point> points;
+	private List<Point> bezierPoints;
 	
 	public Curve(Point point0, Point point1, Point point2, Point point3,
 			Color color) {
-		this.point0 = point0;
-		this.point1 = point1;
-		this.point2 = point2;
-		this.point3 = point3;
 		this.color = color;
+		this.bezierPoints = new ArrayList<Point>();
 		this.points = new ArrayList<Point>();
-		updatePoints();
+		points.add(point0);
+		points.add(point1);
+		points.add(point2);
+		points.add(point3);
+		updateBezierPoints();
 	}
 
 	public Point getPoint0() {
-		return point0;
+		return points.get(0);
 	}
 
 	public Point getPoint1() {
-		return point1;
+		return points.get(1);
 	}
 
 	public Point getPoint2() {
-		return point2;
+		return points.get(2);
 	}
 
 	public Point getPoint3() {
-		return point3;
+		return points.get(3);
 	}
 
 	public Color getColor() {
@@ -48,23 +47,11 @@ public class Curve {
 	}
 	
 	public List<Point> getPoints() {
-		return points;
+		return bezierPoints;
 	}
 
-	public void setPoint0(Point point0) {
-		this.point0 = point0;
-	}
-
-	public void setPoint1(Point point1) {
-		this.point1 = point1;
-	}
-
-	public void setPoint2(Point point2) {
-		this.point2 = point2;
-	}
-
-	public void setPoint3(Point point3) {
-		this.point3 = point3;
+	public void setPoint(int pos, Point point) {
+		points.set(pos, point);
 	}
 
 	public void setColor(Color color) {
@@ -72,34 +59,54 @@ public class Curve {
 	}
 	
 	public Point calculateA() {
-		double x = -point0.getX() + 3*point1.getX() - 3*point2.getX() + point3.getX();
-		double y = -point0.getY() + 3*point1.getY() - 3*point2.getY() + point3.getY();
+		double x = -points.get(0).getX() + 3*points.get(1).getX() - 3*points.get(2).getX() + points.get(3).getX();
+		double y = -points.get(0).getY() + 3*points.get(1).getY() - 3*points.get(2).getY() + points.get(3).getY();
 		return new Point(x, y);
 	}
 	
 	public Point calculateB() {
-		double x = 3*point0.getX() - 6*point1.getX() + 3*point2.getX();
-		double y = 3*point0.getY() - 6*point1.getY() + 3*point2.getY();
+		double x = 3*points.get(0).getX() - 6*points.get(1).getX() + 3*points.get(2).getX();
+		double y = 3*points.get(0).getY() - 6*points.get(1).getY() + 3*points.get(2).getY();
 		return new Point(x, y);
 	}
 	
 	public Point calculateC() {
-		double x = -3*point0.getX() + 3*point1.getX();
-		double y = -3*point0.getY() + 3*point1.getY();
+		double x = -3*points.get(0).getX() + 3*points.get(1).getX();
+		double y = -3*points.get(0).getY() + 3*points.get(1).getY();
 		return new Point(x, y);
 	}
 	
 	public Point calculateD() {
-		return point0;
+		return points.get(0);
 	}
 	
 	public Point getPointAt(double t) {
-		double x = Math.pow(1-t, 3)*point0.getX() + 3*t*Math.pow(1-t, 2)*point1.getX() + 3*Math.pow(t, 2)*(1-t)*point2.getX() + Math.pow(t, 3)*point3.getX();
-		double y = Math.pow(1-t, 3)*point0.getY() + 3*t*Math.pow(1-t, 2)*point1.getY() + 3*Math.pow(t, 2)*(1-t)*point2.getY() + Math.pow(t, 3)*point3.getY();
+		double x = Math.pow(1-t, 3)*points.get(0).getX() + 3*t*Math.pow(1-t, 2)*points.get(1).getX() + 3*Math.pow(t, 2)*(1-t)*points.get(2).getX() + Math.pow(t, 3)*points.get(3).getX();
+		double y = Math.pow(1-t, 3)*points.get(0).getY() + 3*t*Math.pow(1-t, 2)*points.get(1).getY() + 3*Math.pow(t, 2)*(1-t)*points.get(2).getY() + Math.pow(t, 3)*points.get(3).getY();
 		return new Point(x, y);
 	}
 	
-	public void updatePoints() {
-		points = BezierGenerator.generateBezierPoints(this);
+	public void updateBezierPoints() {
+		bezierPoints = BezierGenerator.generateBezierPoints(this);
+	}
+	
+	public int checkMouseCollision(Point clickedPoint) {
+		double d0 = points.get(0).getDistanceTo(clickedPoint);
+		if (d0 <= Constants.POINT_RADIUS) {
+			return 0;
+		}
+		double d1 = points.get(1).getDistanceTo(clickedPoint);
+		if (d1 <= Constants.POINT_RADIUS) {
+			return 1;
+		}
+		double d2 = points.get(2).getDistanceTo(clickedPoint);
+		if (d2 <= Constants.POINT_RADIUS) {
+			return 2;
+		}
+		double d3 = points.get(3).getDistanceTo(clickedPoint);
+		if (d3 <= Constants.POINT_RADIUS) {
+			return 3;
+		}
+		return -1;
 	}
 }

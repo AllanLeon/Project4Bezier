@@ -78,6 +78,7 @@ public class Main extends JFrame implements ActionListener {
 		getContentPane().add(bezierPanel);
 		bezierPanel.setBackground(Color.BLACK);
 		bezierPanel.addMouseListener(mouseHandler);
+		bezierPanel.addMouseMotionListener(mouseHandler);
 		
 		commutator = new JToggleButton("Creator Mode");
 		commutator.setBounds(Constants.WINDOW_WIDTH/2 - 60, Constants.WINDOW_HEIGHT - 60, 120, 25);
@@ -85,13 +86,16 @@ public class Main extends JFrame implements ActionListener {
 		commutator.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (commutator.isSelected()) {
-					commutator.setText("Interact Mode");
-					mouseHandler.reset();
 					modState = ModState.Editing;
+					commutator.setText("Interact Mode");
+					System.out.println("Editing");
+					mouseHandler.reset();
+					paint();
 				}
 				else {
 					modState = ModState.Creating;
 					commutator.setText("Creator Mode");
+					mouseHandler.reset();
 				}
 			}
 		});
