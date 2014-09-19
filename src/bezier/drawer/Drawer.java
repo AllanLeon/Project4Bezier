@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.util.List;
 
-import bezier.controller.BezierGenerator;
 import bezier.data.Constants;
 import bezier.model.Curve;
 import bezier.model.basics.Point;
@@ -171,8 +170,7 @@ public class Drawer {
 	}
 	
 	public static void drawBezierCurve(Graphics g, Curve curve) {
-		BezierGenerator generator = new BezierGenerator(curve);
-		List<Point> points = generator.generateBezierPoints();
+		List<Point> points = curve.getPoints();
 		Color color = curve.getColor();
 		for (int i = 1; i < points.size(); i++) {
 			Point p0 = points.get(i - 1);
@@ -192,6 +190,15 @@ public class Drawer {
 			drawCircle(g, (int)p1.getX(), (int)p1.getY(), i, color);
 			drawCircle(g, (int)p2.getX(), (int)p2.getY(), i, color);
 			drawCircle(g, (int)p3.getX(), (int)p3.getY(), i, color);
+		}
+	}
+	
+	public static void drawCreatorPoints(Graphics g, List<Point> creatorPoints) {
+		for (int i = 0; i < creatorPoints.size(); i++) {
+			Point point = creatorPoints.get(i);
+			for (int j = 1; j <= Constants.POINT_RADIUS; j++) {
+				drawCircle(g, (int)point.getX(), (int)point.getY(), j, Color.WHITE);
+			}
 		}
 	}
 }

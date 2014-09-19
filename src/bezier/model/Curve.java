@@ -1,7 +1,10 @@
 package bezier.model;
 
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
 
+import bezier.controller.BezierGenerator;
 import bezier.model.basics.Point;
 
 public class Curve {
@@ -11,15 +14,17 @@ public class Curve {
 	private Point point2;
 	private Point point3;
 	private Color color;
+	private List<Point> points;
 	
 	public Curve(Point point0, Point point1, Point point2, Point point3,
 			Color color) {
-		super();
 		this.point0 = point0;
 		this.point1 = point1;
 		this.point2 = point2;
 		this.point3 = point3;
 		this.color = color;
+		this.points = new ArrayList<Point>();
+		updatePoints();
 	}
 
 	public Point getPoint0() {
@@ -40,6 +45,10 @@ public class Curve {
 
 	public Color getColor() {
 		return color;
+	}
+	
+	public List<Point> getPoints() {
+		return points;
 	}
 
 	public void setPoint0(Point point0) {
@@ -88,5 +97,9 @@ public class Curve {
 		double x = Math.pow(1-t, 3)*point0.getX() + 3*t*Math.pow(1-t, 2)*point1.getX() + 3*Math.pow(t, 2)*(1-t)*point2.getX() + Math.pow(t, 3)*point3.getX();
 		double y = Math.pow(1-t, 3)*point0.getY() + 3*t*Math.pow(1-t, 2)*point1.getY() + 3*Math.pow(t, 2)*(1-t)*point2.getY() + Math.pow(t, 3)*point3.getY();
 		return new Point(x, y);
+	}
+	
+	public void updatePoints() {
+		points = BezierGenerator.generateBezierPoints(this);
 	}
 }

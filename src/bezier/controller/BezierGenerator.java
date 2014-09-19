@@ -64,7 +64,7 @@ public class BezierGenerator {
 		return nextPoint;
 	}
 	
-	public List<Point> generateBezierPoints() {
+	public static List<Point> generateBezierPoints(Curve curve) {
 		List<Point> points = new ArrayList<Point>();
 		/*points.add(actualPoint);
 		for (int i = 0; i < n; i++) {
@@ -72,11 +72,10 @@ public class BezierGenerator {
 			points.add(actualPoint);
 		}*/
 		double u = 0;
-		double du = 1.0/n;
+		double du = 1.0/50;
 		while (u <= 1.000000001) {
 			points.add(curve.getPointAt(u));
 			u += du;
-			System.out.println(u + " " + du);
 		}
 		return points;
 	}
