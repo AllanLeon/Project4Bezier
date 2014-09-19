@@ -61,4 +61,26 @@ public class Curve {
 	public void setColor(Color color) {
 		this.color = color;
 	}
+	
+	public Point calculateA() {
+		double x = -point0.getX() + 3*point1.getX() - 3*point2.getX() + point3.getX();
+		double y = -point0.getY() + 3*point1.getY() - 3*point2.getY() + point3.getY();
+		return new Point(x, y);
+	}
+	
+	public Point calculateB() {
+		double x = 3*point0.getX() - 6*point1.getX() + 3*point2.getX();
+		double y = 3*point0.getY() - 6*point1.getY() + 3*point2.getY();
+		return new Point(x, y);
+	}
+	
+	public Point calculateC() {
+		double x = -3*point0.getX() + 3*point1.getX();
+		double y = -3*point0.getY() + 3*point1.getY();
+		return new Point(x, y);
+	}
+	
+	public Point calculateD() {
+		return point0;
+	}
 }
