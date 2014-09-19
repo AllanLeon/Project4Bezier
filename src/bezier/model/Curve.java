@@ -83,4 +83,10 @@ public class Curve {
 	public Point calculateD() {
 		return point0;
 	}
+	
+	public Point getPointAt(double t) {
+		double x = Math.pow(1-t, 3)*point0.getX() + 3*t*Math.pow(1-t, 2)*point1.getX() + 3*Math.pow(t, 2)*(1-t)*point2.getX() + Math.pow(t, 3)*point3.getX();
+		double y = Math.pow(1-t, 3)*point0.getY() + 3*t*Math.pow(1-t, 2)*point1.getY() + 3*Math.pow(t, 2)*(1-t)*point2.getY() + Math.pow(t, 3)*point3.getY();
+		return new Point(x, y);
+	}
 }

@@ -4,15 +4,15 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.util.List;
 
-import bezier.BezierGenerator;
-import bezier.data.WindowConstants;
+import bezier.controller.BezierGenerator;
+import bezier.data.Constants;
 import bezier.model.Curve;
 import bezier.model.basics.Point;
 
 public class Drawer {
 
 	private static void putPixel(Graphics g, int x, int y) {
-		g.drawLine(x, WindowConstants.HEIGHT - y, x, WindowConstants.HEIGHT - y);
+		g.drawLine(x, Constants.PANEL_HEIGHT - y, x, Constants.PANEL_HEIGHT - y);
 	}
 	
 	public static void drawLine(Graphics g, int x0, int y0, int x1, int y1, Color color) {
@@ -99,14 +99,15 @@ public class Drawer {
 					y += stepy;
 					d += deltaNE;
 				}
-				if (n != 4 && n != 5) {
+				if (n == 1 || n == 2 || n == 3) {
 					putPixel(g, x, y);
 				} else {
-					if (n > 5) {
-						n = 0;					}
+					if (n > 6) {
+						n = 0;
+					}
 				}
+				n++;
 			}
-			n++;
 		} else {
 			d = -2*dx + dy;
 			deltaE = -2 * dx;
@@ -119,14 +120,15 @@ public class Drawer {
 					x += stepx;
 					d += deltaNE;
 				}
-				if (n != 4 && n != 5) {
+				if (n == 1 || n == 2 || n == 3) {
 					putPixel(g, x, y);
 				} else {
 					if (n > 5) {
-						n = 0;					}
+						n = 0;
+					}
 				}
+				n++;
 			}
-			n++;
 		}
 	}
 	
@@ -171,19 +173,25 @@ public class Drawer {
 	public static void drawBezierCurve(Graphics g, Curve curve) {
 		BezierGenerator generator = new BezierGenerator(curve);
 		List<Point> points = generator.generateBezierPoints();
+		Color color = curve.getColor();
 		for (int i = 1; i < points.size(); i++) {
 			Point p0 = points.get(i - 1);
 			Point p1 = points.get(i);
-			System.out.println(p0.getX() + " " + p0.getY() + ";" + p1.getX() + " " + p1.getY());
-			drawLine(g, (int)p0.getX(), (int)p0.getY(), (int)p1.getX(), (int)p1.getY(), curve.getColor());
+			drawLine(g, (int)p0.getX(), (int)p0.getY(), (int)p1.getX(), (int)p1.getY(), color);
 		}
 		Point p0 = curve.getPoint0();
 		Point p1 = curve.getPoint1();
 		Point p2 = curve.getPoint2();
 		Point p3 = curve.getPoint3();
-		drawDashedLine(g, (int)p0.getX(), (int)p0.getY(), (int)p1.getX(), (int)p1.getY(), Color.WHITE);
-		drawDashedLine(g, (int)p1.getX(), (int)p1.getY(), (int)p2.getX(), (int)p2.getY(), Color.WHITE);
-		drawDashedLine(g, (int)p2.getX(), (int)p2.getY(), (int)p3.getX(), (int)p3.getY(), Color.WHITE);
-		drawDashedLine(g, (int)p3.getX(), (int)p3.getY(), (int)p0.getX(), (int)p0.getY(), Color.WHITE);
+		drawDashedLine(g, (int)p0.getX(), (int)p0.getY(), (int)p1.getX(), (int)p1.getY(), color);
+		drawDashedLine(g, (int)p1.getX(), (int)p1.getY(), (int)p2.getX(), (int)p2.getY(), color);
+		drawDashedLine(g, (int)p2.getX(), (int)p2.getY(), (int)p3.getX(), (int)p3.getY(), color);
+		drawDashedLine(g, (int)p3.getX(), (int)p3.getY(), (int)p0.getX(), (int)p0.getY(), color);
+		for (int i = 1; i <= Constants.POINT_RADIUS; i++) {
+			drawCircle(g, (int)p0.getX(), (int)p0.getY(), i, color);
+			drawCircle(g, (int)p1.getX(), (int)p1.getY(), i, color);
+			drawCircle(g, (int)p2.getX(), (int)p2.getY(), i, color);
+			drawCircle(g, (int)p3.getX(), (int)p3.getY(), i, color);
+		}
 	}
 }

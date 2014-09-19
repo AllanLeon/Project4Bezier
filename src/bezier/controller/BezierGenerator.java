@@ -1,4 +1,4 @@
-package bezier;
+package bezier.controller;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +8,7 @@ import bezier.model.basics.Point;
 
 public class BezierGenerator {
 	
+	private Curve curve;
 	private Point d1, d2, d3;
 	private Point a, b, c, d;
 	private Point actualPoint;
@@ -15,6 +16,7 @@ public class BezierGenerator {
 	
 	public BezierGenerator(Curve curve) {
 		n = 50;
+		this.curve = curve;
 		this.a = curve.calculateA();
 		this.b = curve.calculateB();
 		this.c = curve.calculateC();
@@ -64,10 +66,17 @@ public class BezierGenerator {
 	
 	public List<Point> generateBezierPoints() {
 		List<Point> points = new ArrayList<Point>();
-		points.add(actualPoint);
+		/*points.add(actualPoint);
 		for (int i = 0; i < n; i++) {
 			actualPoint = generateNextPoint();
 			points.add(actualPoint);
+		}*/
+		double u = 0;
+		double du = 1.0/n;
+		while (u <= 1.000000001) {
+			points.add(curve.getPointAt(u));
+			u += du;
+			System.out.println(u + " " + du);
 		}
 		return points;
 	}
