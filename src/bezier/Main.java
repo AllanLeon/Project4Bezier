@@ -16,9 +16,7 @@ import javax.swing.JToggleButton;
 public class Main extends JFrame {
 
 	private static final long serialVersionUID = 1L;
-
 	private JPanel bezierPanel;
-
 	private JToggleButton commutator;
 
 	/**
