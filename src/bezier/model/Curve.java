@@ -80,12 +80,6 @@ public class Curve {
 		return points.get(0);
 	}
 	
-	public Point getPointAt(double t) {
-		double x = Math.pow(1-t, 3)*points.get(0).getX() + 3*t*Math.pow(1-t, 2)*points.get(1).getX() + 3*Math.pow(t, 2)*(1-t)*points.get(2).getX() + Math.pow(t, 3)*points.get(3).getX();
-		double y = Math.pow(1-t, 3)*points.get(0).getY() + 3*t*Math.pow(1-t, 2)*points.get(1).getY() + 3*Math.pow(t, 2)*(1-t)*points.get(2).getY() + Math.pow(t, 3)*points.get(3).getY();
-		return new Point(x, y);
-	}
-	
 	public void updateBezierPoints() {
 		bezierPoints = BezierGenerator.generateBezierPoints(this);
 	}
