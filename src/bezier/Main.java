@@ -88,7 +88,6 @@ public class Main extends JFrame implements ActionListener {
 				if (commutator.isSelected()) {
 					modState = ModState.Editing;
 					commutator.setText("Interact Mode");
-					System.out.println("Editing");
 					mouseHandler.reset();
 					paint();
 				}

@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import javax.swing.SwingUtilities;
+
 import bezier.Main;
 import bezier.Main.ModState;
 import bezier.Main.State;
@@ -34,29 +36,82 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
 		selectedCurve = null;
 		selectedPoint = -1;
 	}
-
-	@Override
-	public void mouseClicked(MouseEvent e) {
-		if (Main.modState == ModState.Creating) {
-			double x = e.getX();
-			double y = Constants.PANEL_HEIGHT - e.getY();
-			Point clickedPoint = new Point(x, y);
-			creatorPoints.add(clickedPoint);
-			if (creatorPoints.size() >= 4) {
-				Main.getCurveManager().addCurve(
-						new Curve(creatorPoints.get(0), creatorPoints.get(1), creatorPoints.get(2), creatorPoints.get(3),
-								new Color(random.nextFloat(), random.nextFloat(), random.nextFloat())));
-				creatorPoints.remove(0);
-				creatorPoints.remove(0);
-				creatorPoints.remove(0);
-				creatorPoints.remove(0);
-				Main.state = State.Drawing;
-			}
-		}
-	}
 	
 	public List<Point> getCreatorPoints() {
 		return creatorPoints;
+	}
+	
+	private Point getClickedPoint(MouseEvent e) {
+		double x = e.getX();
+		double y = Constants.PANEL_HEIGHT - e.getY();
+		return new Point(x, y);
+	}
+	
+	private void handlePointCreation(Point clickedPoint) {
+		creatorPoints.add(clickedPoint);
+		if (creatorPoints.size() >= 4) {
+			Main.getCurveManager().addCurve(
+					new Curve(creatorPoints.get(0), creatorPoints.get(1), creatorPoints.get(2), creatorPoints.get(3),
+							new Color(random.nextFloat(), random.nextFloat(), random.nextFloat())));
+			creatorPoints.remove(0);
+			creatorPoints.remove(0);
+			creatorPoints.remove(0);
+			creatorPoints.remove(0);
+			Main.state = State.Drawing;
+		}
+	}
+	
+	private void handleCurveDeletion(Point clickedPoint) {
+		List<Curve> curves = Main.getCurveManager().getCurves();
+		int i = curves.size() - 1;
+		boolean found = false;
+		while (i >= 0 && !found) {
+			selectedPoint = curves.get(i).checkMouseCollision(clickedPoint);
+			if (selectedPoint != -1) {
+				curves.remove(i);
+				found = true;
+				Main.state = State.Drawing;
+			}
+			i--;
+		}
+	}
+	
+	private void handlePointSelection(Point clickedPoint) {
+		selectedCurve = null;
+		selectedPoint = -1;
+		List<Curve> curves = Main.getCurveManager().getCurves();
+		int i = curves.size() - 1;
+		boolean found = false;
+		while (i >= 0 && !found) {
+			selectedPoint = curves.get(i).checkMouseCollision(clickedPoint);
+			if (selectedPoint != -1) {
+				selectedCurve = curves.get(i);
+				found = true;
+			}
+			i--;
+		}
+	}
+	
+	private void handlePointMovement(Point draggedPoint) {
+		if (selectedPoint != -1) {
+			selectedCurve.setPoint(selectedPoint, draggedPoint);
+			selectedCurve.updateBezierPoints();
+			Main.state = State.Drawing;
+		}
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		Point clickedPoint = getClickedPoint(e);
+		if (SwingUtilities.isLeftMouseButton(e)) {
+			if (Main.modState == ModState.Creating) {
+				handlePointCreation(clickedPoint);
+			}
+		} else if (SwingUtilities.isRightMouseButton(e)) {
+			if (Main.modState == ModState.Editing) {
+				handleCurveDeletion(clickedPoint);
+			}
+		}
 	}
 
 	@Override
@@ -73,22 +128,10 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		if (Main.modState == ModState.Editing) {
-			double x = e.getX();
-			double y = Constants.PANEL_HEIGHT - e.getY();
-			Point clickedPoint = new Point(x, y);
-			selectedCurve = null;
-			selectedPoint = -1;
-			List<Curve> curves = Main.getCurveManager().getCurves();
-			int i = curves.size() - 1;
-			boolean found = false;
-			while (i >= 0 && !found) {
-				selectedPoint = curves.get(i).checkMouseCollision(clickedPoint);
-				if (selectedPoint != -1) {
-					selectedCurve = curves.get(i);
-					found = true;
-				}
-				i--;
+		if (SwingUtilities.isLeftMouseButton(e)) {
+			if (Main.modState == ModState.Editing) {
+				Point clickedPoint = getClickedPoint(e);
+				handlePointSelection(clickedPoint);
 			}
 		}
 	}
@@ -101,14 +144,12 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
-		if (Main.modState == ModState.Editing) {
-			if (selectedPoint != -1) {
-				double x = e.getX();
-				double y = Constants.PANEL_HEIGHT - e.getY();
-				Point draggedPoint = new Point(x, y);
-				selectedCurve.setPoint(selectedPoint, draggedPoint);
-				selectedCurve.updateBezierPoints();
-				Main.state = State.Drawing;
+		if (SwingUtilities.isLeftMouseButton(e)) {
+			if (Main.modState == ModState.Editing) {
+				if (selectedPoint != -1) {
+					Point draggedPoint = getClickedPoint(e);
+					handlePointMovement(draggedPoint);
+				}
 			}
 		}
 	}
@@ -118,5 +159,4 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
 		// TODO Auto-generated method stub
 		
 	}
-
 }
